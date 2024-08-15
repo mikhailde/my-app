@@ -1,17 +1,6 @@
 stages:
-  - build
   - test
   - deploy
-
-variables:
-  IMAGE_NAME: registry.gitlab.com/mikhailde/my-app
-
-build:
-  stage: build
-  image: none
-  script:
-    - docker build -t $IMAGE_NAME:latest .
-    - docker push $IMAGE_NAME:latest
 
 test:
   stage: test
@@ -24,4 +13,4 @@ deploy:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
-    - helm upgrade --install my-app ./chart --set image.tag=latest --set image.repository=$IMAGE_NAME
+    - helm upgrade --install my-app ./chart
