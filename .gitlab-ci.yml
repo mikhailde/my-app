@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  IMAGE_NAME: registry.gitlab.com/<your_username>/my-app
+  IMAGE_NAME: registry.gitlab.com/mikhailde/my-app
 
 build:
   stage: build
