@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: registry.gitlab.com/mikhailde/my-app
+  repository: python
   tag: latest
   pullPolicy: IfNotPresent
 
