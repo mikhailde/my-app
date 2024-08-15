@@ -1,0 +1,16 @@
+gitlabUrl: https://gitlab.com  # Замени на URL твоего инстанса GitLab, если нужно
+runnerRegistrationToken: "glrt-k-GgEkKVDdyfeCDygsr-"  # Замени на токен регистрации Runner из настроек проекта GitLab
+
+## Для подключения к Minikube:
+runners:
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "{{.Release.Namespace}}"
+        image = "alpine"
+        # Подключаем конфигурацию kubectl для Minikube
+        kubeconfig = "~/.kube/config"
+rbac:
+  create: true
+serviceAccount:
+  create: true
