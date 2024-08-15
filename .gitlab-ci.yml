@@ -8,7 +8,7 @@ variables:
 
 build:
   stage: build
-  image: docker:latest
+  image: none
   script:
     - docker build -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:latest
