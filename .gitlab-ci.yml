@@ -1,10 +1,21 @@
 stages:
+  - build
   - test
   - deploy
 
+variables:
+  IMAGE_NAME: registry.gitlab.com/<your_username>/my-app
+
+build:
+  stage: build
+  image: docker:latest
+  script:
+    - docker build -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:latest
+
 test:
   stage: test
-  image: python:latest
+  image: python:3.9
   script:
     - pip install -r requirements.txt
     - python -m unittest discover -s tests
@@ -13,4 +24,4 @@ deploy:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
-    - helm upgrade --install my-app ./chart
+    - helm upgrade --install my-app ./chart --set image.tag=latest --set image.repository=$IMAGE_NAME
