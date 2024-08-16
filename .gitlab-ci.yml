@@ -6,9 +6,6 @@ stages:
 variables:
   IMAGE_NAME: registry.gitlab.com/mikhailde/my-app
 
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-
 build:
   stage: build
   image: gcr.io/kaniko-project/executor:debug
