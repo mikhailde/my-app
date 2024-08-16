@@ -10,6 +10,9 @@ build:
   stage: build
   image: gcr.io/kaniko-project/executor:debug
   script:
+    - echo "CI_REGISTRY_USER: $CI_REGISTRY_USER"
+    - echo "CI_REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD"
+    - echo "CI_REGISTRY: $CI_REGISTRY"
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_NAME:latest
 
 test:
