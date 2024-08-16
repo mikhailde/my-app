@@ -11,7 +11,7 @@ before_script:
 
 build:
   stage: build
-  image: gcr.io/kaniko-project/executor:latest
+  image: gcr.io/kaniko-project/executor:debug
   script:
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_NAME:latest
 
