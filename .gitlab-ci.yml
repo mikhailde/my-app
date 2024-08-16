@@ -5,6 +5,7 @@ stages:
 
 variables:
   IMAGE_NAME: registry.gitlab.com/$CI_REGISTRY_USER/my-app
+  DOCKER_HOST: host.docker.internal:2375
   
 build:
   stage: build
