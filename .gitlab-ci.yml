@@ -12,8 +12,6 @@ build:
   services:
     - docker:dind
   script:
-    - docker context import minikube minikube.dockercontext
-    - docker context use minikube
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:latest
