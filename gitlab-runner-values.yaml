@@ -1,0 +1,14 @@
+gitlabUrl: 'https://gitlab.com/'
+rbac:
+  create: true
+serviceAccount:
+  create: true
+runnerRegistrationToken: 'glrt-zZsjwpq85Vh_hk7WmNsL'
+runners:
+  config: |
+    [[runners]]
+      [runners.docker]
+        tls_verify = false
+        image = "docker:latest"
+        privileged = true
+        volumes = ["tcp://host.docker.internal:2375:/var/run/docker.sock", "/cache"]
