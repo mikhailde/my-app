@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  IMAGE_NAME: registry.gitlab.com/mshchannikov/my-app
+  IMAGE_NAME: registry.gitlab.com/mikhailde/my-app
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -18,7 +18,7 @@ build:
 
 test:
   stage: test
-  image: python:3.9
+  image: python:latest
   script:
     - pip install -r requirements.txt
     - python -m unittest discover -s tests
