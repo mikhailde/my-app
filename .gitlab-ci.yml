@@ -4,7 +4,6 @@ stages:
   - deploy
 
 variables:
-  IMAGE_NAME: $CI_REGSITRY/mikhailde/my-app
   DOCKER_HOST: host.minikube.internal:2375
   
 build:
@@ -12,9 +11,9 @@ build:
   image: docker:latest
   script:
     - env
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $IMAGE_NAME:latest .
-    - docker push $IMAGE_NAME:latest
+    - docker login -u $GITLAB_USER_LOGIN -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
 
 test:
   stage: test
@@ -27,4 +26,4 @@ deploy:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
-    - helm upgrade --install my-app ./chart --set image.tag=latest --set image.repository=$IMAGE_NAME
+    - helm upgrade --install my-app ./chart --set image.tag=latest --set image.repository=$CI_REGISTRY_IMAGE
