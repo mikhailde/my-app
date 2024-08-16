@@ -1,10 +1,12 @@
 replicaCount: 1
 
 image:
-  repository: python
+  repository: registry.gitlab.com/mikhailde/my-app
   tag: latest
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
-  port: 8080
+  type: NodePort
+  port: 80
+  targetPort: 5000
+  nodePort: 30000
