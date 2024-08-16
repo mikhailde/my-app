@@ -5,11 +5,12 @@ stages:
 
 variables:
   IMAGE_NAME: registry.gitlab.com/mikhailde/my-app
-  DOCKER_HOST: tcp://docker:2375
+  DOCKER_HOST: tcp://docker-dind:2375
   DOCKER_TLS_CERTDIR: ""
 
 services:
-  - docker:dind
+  - name: docker:dind
+    alias: docker-dind
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -18,6 +19,7 @@ build:
   stage: build
   image: docker:latest
   script:
+    - export DOCKER_HOST=tcp://docker-dind:2375
     - docker build -t $IMAGE_NAME:latest .
     - docker push $IMAGE_NAME:latest
 
