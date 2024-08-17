@@ -5,7 +5,7 @@ stages:
 
 variables:
   DOCKER_HOST: host.minikube.internal:2375
-  
+
 build:
   stage: build
   image: docker:latest
