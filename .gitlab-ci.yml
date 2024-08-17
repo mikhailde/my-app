@@ -1,25 +1,25 @@
 stages:
-  # - build
-  # - test
+  - build
+  - test
   - deploy
 
 variables:
   DOCKER_HOST: host.minikube.internal:2375
   
-build:
-  stage: build
-  image: docker:latest
-  script:
-    - docker login -u $GITLAB_USER_LOGIN -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:latest .
-    - docker push $CI_REGISTRY_IMAGE:latest
+# build:
+#   stage: build
+#   image: docker:latest
+#   script:
+#     - docker login -u $GITLAB_USER_LOGIN -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - docker build -t $CI_REGISTRY_IMAGE:latest .
+#     - docker push $CI_REGISTRY_IMAGE:latest
 
-test:
-  stage: test
-  image: python:latest
-  script:
-    - pip install -r requirements.txt
-    - python -m unittest discover -s tests
+# test:
+#   stage: test
+#   image: python:latest
+#   script:
+#     - pip install -r requirements.txt
+#     - python -m unittest discover -s tests
 
 deploy:
   stage: deploy
