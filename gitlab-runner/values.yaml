@@ -1,0 +1,23 @@
+gitlabUrl: "https://gitlab.com/"
+rbac:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["*"]
+      verbs: ["*"]
+    - apiGroups: ["networking.k8s.io"]
+      resources: ["ingresses"]
+      verbs: ["*"]
+    - apiGroups: ["apps"]
+      resources: ["deployments"]
+      verbs: ["*"]
+  clusterWideAccess: true
+serviceAccount:
+  create: true
+runners:
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        image = "ubuntu:22.04"
+        service_account = "gitlab-runner"
+  secret: gitlab-runner-secret
