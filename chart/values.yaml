@@ -25,8 +25,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations:
-  kubectl.kubernetes.io/restartedAt: "{{ now | date \"20060102150405\" }}"
+podAnnotations: {}
 podLabels: {}
 
 podSecurityContext: {}
