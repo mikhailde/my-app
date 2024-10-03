@@ -24,3 +24,4 @@ deploy:
   image: dtzar/helm-kubectl
   script:
     - helm upgrade --install my-app ./chart --set image.tag=latest --set image.repository=$CI_REGISTRY_IMAGE --namespace my-app --create-namespace
+    - kubectl rollout restart deployment my-app -n my-app
