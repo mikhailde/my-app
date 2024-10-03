@@ -8,11 +8,15 @@ stages:
 
 build:
   stage: build
-  image: docker:latest
+  image: 
+    name: gcr.io/kaniko-project/executor:latest
+    entrypoint: [""]
   script:
     - docker login -u $GITLAB_USER_LOGIN -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:latest .
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - /kaniko/executor \
+      --context $CI_PROJECT_DIR \
+      --dockerfile $CI_PROJECT_DIR/Dockerfile \
+      --destination $CI_REGISTRY_IMAGE:latest
 
 test:
   stage: test
