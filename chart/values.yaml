@@ -26,7 +26,7 @@ serviceAccount:
   name: ""
 
 podAnnotations:
-  kubectl.kubernetes.io/restartedAt: $(date +%FT%T)
+  kubectl.kubernetes.io/restartedAt: {{ now | date "20060102150405" }}
 podLabels: {}
 
 podSecurityContext: {}
