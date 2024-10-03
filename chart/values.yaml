@@ -74,7 +74,7 @@ resources: {}
 livenessProbe:
   httpGet:
     path: /
-    port: 80800
+    port: 8080
 readinessProbe:
   httpGet:
     path: /
