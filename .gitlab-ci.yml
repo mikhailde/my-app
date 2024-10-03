@@ -9,14 +9,11 @@ stages:
 build:
   stage: build
   image: 
-    name: gcr.io/kaniko-project/executor:latest
+    name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - docker login -u $GITLAB_USER_LOGIN -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - /kaniko/executor \
-      --context $CI_PROJECT_DIR \
-      --dockerfile $CI_PROJECT_DIR/Dockerfile \
-      --destination $CI_REGISTRY_IMAGE:latest
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:latest"
 
 test:
   stage: test
