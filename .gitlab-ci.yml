@@ -3,8 +3,8 @@ stages:
   - test
   - deploy
 
-variables:
-  DOCKER_HOST: host.minikube.internal:2375
+# variables:
+#   DOCKER_HOST: host.minikube.internal:2375
 
 build:
   stage: build
