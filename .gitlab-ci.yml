@@ -13,45 +13,38 @@ cache:
     - .cache/pip
     - venv/
 
-before_script:
-  - python -m venv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
-
-
-build:
-  stage: build
-  image: python:latest
+default:
   before_script:
     - python -m venv venv
     - source venv/bin/activate
-    - pip install -r requirements.txt    
+    - pip install -r requirements.txt
+  image: python:latest 
+
+build:
+  stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
-    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr-d '\n')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${IMAGE_NAME}:latest"
 
 test_util_1:
   stage: test
   image: python:latest
   script:
-    - pip install -r requirements.txt
     - python -m unittest tests.test_app.TestUtil1
 
 test_util_2:
   stage: test
   image: python:latest
   script:
-    - pip install -r requirements.txt
     - python -m unittest tests.test_app.TestUtil2
 
 test_flask_app:
   stage: test
   image: python:latest
   script:
-    - pip install -r requirements.txt
     - python -m unittest tests.test_app.TestFlaskApp
 
 deploy:
