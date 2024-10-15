@@ -3,6 +3,17 @@ stages:
   - test
   - deploy
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python -m venv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+
 build:
   stage: build
   image:
@@ -11,10 +22,6 @@ build:
   script:
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:latest"
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - venv/
 
 test_util_1:
   stage: test
@@ -22,10 +29,6 @@ test_util_1:
   script:
     - pip install -r requirements.txt
     - python -m unittest tests.test_app.TestUtil1
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - venv/
 
 test_util_2:
   stage: test
@@ -33,10 +36,6 @@ test_util_2:
   script:
     - pip install -r requirements.txt
     - python -m unittest tests.test_app.TestUtil2
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - venv/
 
 test_flask_app:
   stage: test
@@ -44,10 +43,6 @@ test_flask_app:
   script:
     - pip install -r requirements.txt
     - python -m unittest tests.test_app.TestFlaskApp
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - venv/
 
 deploy:
   stage: deploy
