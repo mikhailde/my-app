@@ -4,7 +4,7 @@ stages:
   - test
   - deploy
 
-install_dependencies:
+install_deps:
   stage: install_deps
   image: python:latest
   script:
