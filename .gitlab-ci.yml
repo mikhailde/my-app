@@ -3,6 +3,10 @@ stages:
   - test
   - deploy
 
+variables:
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
@@ -10,9 +14,11 @@ cache:
     - venv/
 
 before_script:
-  - python -m venv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
+  image: python:latest
+  script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
 
 build:
   stage: build
@@ -21,7 +27,7 @@ build:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:latest"
+    - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${IMAGE_NAME}:latest"
 
 test_util_1:
   stage: test
