@@ -1,17 +1,23 @@
 stages:
+  - install_deps
   - build
   - test
   - deploy
 
-variables:
-  IMAGE_NAME: $CI_REGISTRY_IMAGE
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - .cache/pip
-    - venv/
+install_dependencies:
+  stage: install_deps
+  image: python:latest
+  script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install --no-cache-dir -r requirements.txt
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - venv/
+  artifacts:
+    paths:
+      - venv/
 
 build:
   stage: build
@@ -43,7 +49,7 @@ test_util_1:
     paths:
       - venv/
   dependencies:
-    - build
+    - install_deps
 
 test_util_2:
   stage: test
@@ -56,20 +62,20 @@ test_util_2:
     paths:
       - venv/
   dependencies:
-    - build
+    - install_deps
 
 test_flask_app:
   stage: test
   image: python:latest
   script:
-    - python -m unittest tests.test_app.TestFlaskApp
     - source venv/bin/activate
+    - python -m unittest tests.test_app.TestFlaskApp
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - venv/
   dependencies:
-    - build
+    - install_deps
 
 deploy:
   stage: deploy
