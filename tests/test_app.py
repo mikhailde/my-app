@@ -1,105 +1,104 @@
 import unittest
-import requests
-
-class TestEndpoints(unittest.TestCase):
-
-    def setUp(self):
-        """Настройки перед каждым тестом."""
-        self.base_url = "http://localhost:5000"
-
-    def test_hello_world_endpoint(self):
-        """Тестирование endpoint'а /."""
-        response = requests.get(f"{self.base_url}/")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.text, "Hello, World!")
-
-    def test_hello_name_endpoint_valid(self):
-        """Тестирование endpoint'а /hello/<name> с валидным именем."""
-        name = "TestUser"
-        response = requests.get(f"{self.base_url}/hello/{name}")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.text, f"Hello, {name}!")
-
-    def test_hello_name_endpoint_invalid(self):
-        """Тестирование endpoint'а /hello/<name> с невалидным именем."""
-        name = "!@#"
-        response = requests.get(f"{self.base_url}/hello/{name}")
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("Invalid input", response.text)
-
-    def test_params_endpoint(self):
-        """Тестирование endpoint'а /params."""
-        param1 = "value1"
-        param2 = "value2"
-        response = requests.get(f"{self.base_url}/params", params={"param1": param1, "param2": param2})
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data["param1"], param1)
-        self.assertEqual(data["param2"], param2)
-
-    def test_post_endpoint(self):
-        """Тестирование endpoint'а /post_endpoint."""
-        data = {"key1": "value1", "key2": "value2"}
-        response = requests.post(f"{self.base_url}/post_endpoint", json=data)
-        self.assertEqual(response.status_code, 201)
-        response_data = response.json()
-        self.assertEqual(response_data["message"], "Data received successfully")
+from app import util_1, util_2, app
 
 
-    def test_protected_endpoint_unauthorized(self):
-        """Тестирование endpoint'а /protected без авторизации."""
-        response = requests.get(f"{self.base_url}/protected")
-        self.assertEqual(response.status_code, 401)
-        self.assertIn("Unauthorized", response.text)
+class TestUtil1(unittest.TestCase):
 
+    def test_palindrome_true(self):
+        self.assertTrue(util_1("madam"))
 
-    def test_protected_endpoint_authorized(self):
-         """Тестирование endpoint'а /protected с авторизацией."""
-         headers = {"Authorization": "Bearer valid_token"}
-         response = requests.get(f"{self.base_url}/protected", headers=headers)
-         self.assertEqual(response.status_code, 200)
-         self.assertEqual(response.text, "Access granted!")
+    def test_palindrome_false(self):
+        self.assertFalse(util_1("hello"))
 
-class TestUtils(unittest.TestCase):
+    def test_palindrome_mixed_case(self):
+        self.assertTrue(util_1("Racecar"))
 
-    def test_util_1_palindrome(self):
-         """Тестирование функции util_1 с палиндромом."""
-         self.assertTrue(util_1("A man, a plan, a canal: Panama"))
+    def test_palindrome_with_spaces(self):
+        self.assertTrue(util_1("A man a plan a canal Panama"))
 
-    def test_util_1_not_palindrome(self):
-         """Тестирование функции util_1 со строкой, не являющейся палиндромом."""
-         self.assertFalse(util_1("race a car"))
+    def test_palindrome_with_punctuation(self):
+        self.assertTrue(util_1("Madam, I'm Adam!"))
 
-
-    def test_util_1_empty(self):
-          """Тестирование функции util_1 c пустой строкой."""
-          self.assertTrue(util_1(""))
-
-
-    def test_util_1_invalid_input(self):
-       """Тестирование функции util_1 с невалидным вводом."""
-       with self.assertRaises(TypeError):
+    def test_util_1_wrong_input(self):
+        with self.assertRaises(TypeError):
             util_1(123)
 
-    def test_util_2_positive(self):
-        """Тестирование функции util_2 с положительными числами."""
+
+class TestUtil2(unittest.TestCase):
+    def test_util_2_sum_positive(self):
         self.assertEqual(util_2([1, 2, 3]), 6)
 
-    def test_util_2_negative(self):
-        """Тестирование функции util_2 с отрицательными числами."""
+
+    def test_util_2_sum_float(self):
+        self.assertEqual(util_2([1.1, 2.2, 3.3]), 6.6)
+
+    def test_util_2_sum_negative(self):
         self.assertEqual(util_2([-1, -2, -3]), -6)
 
-    def test_util_2_mixed(self):
-        """Тестирование функции util_2 со смешанными числами."""
-        self.assertEqual(util_2([1, -2, 3.5]), 2.5)
 
-    def test_util_2_empty(self):
-        """Тестирование функции util_2 с пустым списком."""
+    def test_util_2_sum_empty(self):
         self.assertEqual(util_2([]), 0)
 
-    def test_util_2_invalid_input(self):
-       """Тестирование функции util_2 с невалидным вводом."""
-       with self.assertRaises(TypeError):
+    def test_util_2_wrong_input_type(self):
+        with self.assertRaises(TypeError):
             util_2("abc")
-       with self.assertRaises(TypeError):
-           util_2([1, "a", 3])
+
+
+    def test_util_2_wrong_element_type(self):
+        with self.assertRaises(TypeError):
+            util_2([1, "a", 3])
+
+class TestFlaskApp(unittest.TestCase):
+
+    def setUp(self):
+        self.app = app.test_client()
+
+
+
+    def test_hello_world(self):
+        response = self.app.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Hello, World!")
+
+
+    def test_hello_name(self):
+        response = self.app.get("/hello/Mikhail")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Hello, Mikhail!")
+
+
+    def test_hello_name_invalid_input(self):
+        response = self.app.get("/hello/Mikhail123")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data, b"Invalid input")
+
+
+
+
+    def test_params(self):
+        response = self.app.get("/params?param1=value1¶m2=value2")
+        self.assertEqual(response.status_code, 200)
+        data = jsonify({"param1": "value1", "param2": "value2"}).get_data(as_text=True)
+        self.assertEqual(response.get_data(as_text=True), data)
+
+
+    def test_post_endpoint(self):
+        data = {"key1": "value1", "key2": "value2"}
+        response = self.app.post("/post_endpoint", json=data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json, {"message": "Data received successfully"})
+
+
+    def test_protected_authorized(self):
+        response = self.app.get("/protected", headers={"Authorization": "Bearer valid_token"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, b"Access granted!")
+
+    def test_protected_unauthorized(self):
+        response = self.app.get("/protected")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.data, b"Unauthorized")
+
+
+if __name__ == "__main__":
+    unittest.main()
