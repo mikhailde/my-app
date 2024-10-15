@@ -12,12 +12,21 @@ build:
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:latest"
 
-test:
+test_endpoints:
   stage: test
   image: python:latest
   script:
     - pip install -r requirements.txt
-    - python -m unittest discover -s tests
+    - python -m unittest discover test_app.TestEndpoints
+  parallel: 2
+
+test_utils:
+  stage: test
+  image: python:latest
+  script:
+    - pip install -r requirements.txt
+    - python -m unittests discover test_app.TestUtils
+  parallel: 2
 
 deploy:
   stage: deploy
