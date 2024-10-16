@@ -34,9 +34,8 @@ cache:
 test_util:
   extends: .default_test
   script:
-    - if [ "$CI_NODE_INDEX" == "0" ]; then python -m unittest tests.test_app.TestUtil1; fi
-    - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app.TestUtil2; fi
-    - echo $CI_NODE_INDEX
+    - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app.TestUtil1; fi
+    - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_app.TestUtil2; fi
   parallel: 2
 
 test_flask_app:
