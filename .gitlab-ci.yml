@@ -36,6 +36,7 @@ test_util:
   script:
     - if [ "$CI_NODE_INDEX" == "0" ]; then python -m unittest tests.test_app.TestUtil1; fi
     - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app.TestUtil2; fi
+    - echo $CI_NODE_INDEX
   parallel: 2
 
 test_flask_app:
