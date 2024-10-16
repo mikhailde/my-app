@@ -14,7 +14,8 @@ build:
         --dockerfile "${CI_PROJECT_DIR}/Dockerfile" \
         --destination "${CI_REGISTRY_IMAGE}:latest" \
         --cache=true \
-        --cache-repo="${CI_REGISTRY_IMAGE}/cache"
+        --cache-repo="${CI_REGISTRY_IMAGE}/cache" \
+        --help
 
 cache:
   key: ${CI_PROJECT_NAME}-pip-cache
