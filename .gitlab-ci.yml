@@ -21,7 +21,6 @@ cache:
   key: ${CI_PROJECT_NAME}-pip-cache
   paths:
     - venv/
-    - .cache/pip/
 
 .default_test:
   stage: test
