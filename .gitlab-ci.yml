@@ -10,11 +10,12 @@ build:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}" \
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile" \
-      --destination "${CI_REGISTRY_IMAGE}:latest" \
-      --cache=true \
+    - /kaniko/executor --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:latest"
+      --cache=true
       --cache-repo="${CI_REGISTRY_IMAGE}/cache"
+
 
 cache:
   key: ${CI_PROJECT_NAME}-pip-cache
@@ -46,8 +47,8 @@ deploy:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
-    - helm upgrade --install my-app ./chart \
-        --set image.tag=latest \
-        --set image.repository=$CI_REGISTRY_IMAGE \
-        --namespace my-app --create-namespace
+    - helm upgrade --install my-app ./chart
+      --set image.tag=latest
+      --set image.repository=$CI_REGISTRY_IMAGE
+      --namespace my-app --create-namespace
     - kubectl rollout restart deployment my-app -n my-app
