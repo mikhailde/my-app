@@ -26,4 +26,13 @@ runners:
       [runners.kubernetes]
         image = "ubuntu:22.04"
         service_account = "gitlab-runner"
+        [runners.kubernetes.volumes]
+          [[runners.kubernetes.volumes.pvc]]
+          name = "gitlab-cache-pvc"
+          mount_path = "/cache"
+
+      [runners.cache]
+        Type = "persistentVolumeClaim"
+        Shared = true
+        Path = "/cache"
   secret: gitlab-runner-secret
