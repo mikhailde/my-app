@@ -8,6 +8,7 @@ cache:
   paths:
     - venv/
     - .cache/pip
+  policy: pull-push
 
 build:
   stage: build
