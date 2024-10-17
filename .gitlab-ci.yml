@@ -1,43 +1,39 @@
 stages:
-  # - build
+  - build
   - test
   - deploy
 
-# build:
-#   stage: build
-#   image:
-#     name: gcr.io/kaniko-project/executor:debug
-#     entrypoint: [""]
-#   script:
-#     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-#     - /kaniko/executor --context "${CI_PROJECT_DIR}"
-#       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-#       --destination "${CI_REGISTRY_IMAGE}:latest"
-#       --cache=true
-#       --cache-repo="${CI_REGISTRY_IMAGE}/cache"
-
-
 cache:
-  key: ${CI_PROJECT_NAME}-pip-cache
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
     - venv/
+    - .cache/pip
+
+build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:latest"
+      --cache=true
+      --cache-repo=${CI_REGISTRY_IMAGE}/cache
 
 .default_test:
   stage: test
   image: python:latest
   before_script:
-    - ls
     - python -m venv venv
     - source venv/bin/activate
     - pip install -r requirements.txt
-  cache:
-    key: ${CI_PROJECT_NAME}-pip-cache
-    paths:
-      - venv/
 
 test_util:
   extends: .default_test
   script:
+    - ls -la
     - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app.TestUtil1; fi
     - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_app.TestUtil2; fi
   parallel: 2
@@ -45,6 +41,7 @@ test_util:
 test_flask_app:
   extends: .default_test
   script:
+    - ls -la
     - python -m unittest tests.test_app.TestFlaskApp
 
 deploy:
