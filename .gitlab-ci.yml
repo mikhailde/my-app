@@ -3,12 +3,12 @@ stages:
   - test
   - deploy
 
-# cache:
-#   key: ${CI_COMMIT_REF_SLUG}
-#   paths:
-#     - venv/
-#     - .cache/pip
-#   policy: pull-push
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - venv/
+    - .cache/pip
+  policy: pull-push
 
 build:
   stage: build
