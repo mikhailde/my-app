@@ -28,6 +28,7 @@ build:
   stage: test
   image: python:latest
   before_script:
+    - ls -la
     - python -m venv venv
     - source venv/bin/activate
     - pip install -r requirements.txt
@@ -35,7 +36,6 @@ build:
 test_util:
   extends: .default_test
   script:
-    - ls -la
     - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app.TestUtil1; fi
     - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_app.TestUtil2; fi
   parallel: 2
@@ -43,7 +43,6 @@ test_util:
 test_flask_app:
   extends: .default_test
   script:
-    - ls -la
     - python -m unittest tests.test_app.TestFlaskApp
 
 deploy:
