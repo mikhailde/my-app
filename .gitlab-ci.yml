@@ -6,13 +6,8 @@ stages:
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - .cache/pip
     - venv/
-
-before_script:
-  - python -m venv venv
-  - source venv/bin/activate
-  - pip install -r requirements.txt
+    - .cache/pip
 
 build:
   stage: build
@@ -20,33 +15,42 @@ build:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
+    - ls -la
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${CI_PROJECT_DIR}/Dockerfile" --destination "${CI_REGISTRY_IMAGE}:latest"
+    - /kaniko/executor --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:latest"
+      --cache=true
+      --cache-repo=${CI_REGISTRY_IMAGE}/cache
 
-test_util_1:
+.default_test:
   stage: test
   image: python:latest
-  script:
+  before_script:
+    - python -m venv venv
+    - source venv/bin/activate
     - pip install -r requirements.txt
-    - python -m unittest tests.test_app.TestUtil1
 
-test_util_2:
-  stage: test
-  image: python:latest
+test_util:
+  extends: .default_test
   script:
-    - pip install -r requirements.txt
-    - python -m unittest tests.test_app.TestUtil2
+    - ls -la
+    - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app.TestUtil1; fi
+    - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_app.TestUtil2; fi
+  parallel: 2
 
 test_flask_app:
-  stage: test
-  image: python:latest
+  extends: .default_test
   script:
-    - pip install -r requirements.txt
+    - ls -la
     - python -m unittest tests.test_app.TestFlaskApp
 
 deploy:
   stage: deploy
   image: dtzar/helm-kubectl
   script:
-    - helm upgrade --install my-app ./chart --set image.tag=latest --set image.repository=$CI_REGISTRY_IMAGE --namespace my-app --create-namespace
+    - helm upgrade --install my-app ./chart
+      --set image.tag=latest
+      --set image.repository=$CI_REGISTRY_IMAGE
+      --namespace my-app --create-namespace
     - kubectl rollout restart deployment my-app -n my-app
