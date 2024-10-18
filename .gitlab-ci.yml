@@ -66,6 +66,6 @@ deploy_tf:
   before_script:
     - cd terraform
     - terraform init
-  # script:
-  #   - terraform plan -out=tfplan
-  #   - terraform apply -input=false tfplan
+  script:
+    - terraform plan -out=tfplan
+    # - terraform apply -input=false tfplan
