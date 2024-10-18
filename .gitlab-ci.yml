@@ -58,10 +58,14 @@ deploy_tf:
   image: hashicorp/terraform:light
   variables:
     TF_VAR_image_registry: $CI_REGISTRY_IMAGE
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - terraform/
+    policy: pull-push
   before_script:
     - cd terraform
     - terraform init
-    - ls -la
   script:
     - terraform plan -out=tfplan
     - terraform apply -input=false tfplan
