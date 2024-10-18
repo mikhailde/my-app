@@ -53,12 +53,12 @@ test_flask_app:
 #       --namespace my-app --create-namespace
 #     - kubectl rollout restart deployment my-app -n my-app
 
-variables:
-  TF_VAR_image_registry: $CI_REGISTRY_IMAGE
 
 deploy_tf:
   stage: deploy_tf
   image: hashicorp/terraform:light
+  variables:
+    TF_VAR_image_registry: $CI_REGISTRY_IMAGE
   before_script:
     - cd terraform
     - terraform --version

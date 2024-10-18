@@ -2,13 +2,17 @@ terraform {
   required_providers {
     kubernetes = {
       source = "hashicorp/kubernetes"
-      version = "~> 2.33.0"
+      version = "2.33.0"
     }
   }
 }
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
+}
+
+locals {
+  image      = "${var.image_registry}:${var.image_tag}"
 }
 
 variable "image_registry" {
@@ -53,9 +57,9 @@ resource "kubernetes_deployment" "app_deployment" {
       spec {
         container {
           image = local.image
-          name  = "my-app-container"
+          name  = "my-app"
 
-          ports {
+          port {
             container_port = 8080
           }
 
@@ -84,7 +88,7 @@ resource "kubernetes_deployment" "app_deployment" {
 
 resource "kubernetes_service" "app_service" {
   metadata {
-    name      = "my-app-service"
+    name      = "my-app"
     namespace = kubernetes_namespace.app_ns.metadata[0].name
   }
 
