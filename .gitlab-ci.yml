@@ -1,7 +1,8 @@
 stages:
   - build
   - test
-  - deploy
+  # - deploy_helm
+  - deploy_tf
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -42,12 +43,25 @@ test_flask_app:
   script:
     - python -m unittest tests.test_app.TestFlaskApp
 
-deploy:
-  stage: deploy
-  image: dtzar/helm-kubectl
+# deploy_helm:
+#   stage: deploy_helm
+#   image: dtzar/helm-kubectl
+#   script:
+#     - helm upgrade --install my-app ./chart
+#       --set image.tag=latest
+#       --set image.repository=$CI_REGISTRY_IMAGE
+#       --namespace my-app --create-namespace
+#     - kubectl rollout restart deployment my-app -n my-app
+
+variables:
+  TF_VAR_image_registry: $CI_REGISTRY_IMAGE
+
+deploy_tf:
+  stage: deploy_tf
+  image: hashicorp/terraform:light
+  before_script:
+    - terraform --version
+    - terraform init
   script:
-    - helm upgrade --install my-app ./chart
-      --set image.tag=latest
-      --set image.repository=$CI_REGISTRY_IMAGE
-      --namespace my-app --create-namespace
-    - kubectl rollout restart deployment my-app -n my-app
+    - terraform plan -out=tfplan
+    - terraform apply -input=false tfplan
