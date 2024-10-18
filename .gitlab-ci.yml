@@ -4,12 +4,6 @@ stages:
   # - deploy_helm
   - deploy_tf
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - venv/
-  policy: pull-push
-
 build:
   stage: build
   image:
@@ -30,6 +24,11 @@ build:
     - python -m venv venv
     - source venv/bin/activate
     - pip install -r requirements.txt
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - venv/
+    policy: pull-push
 
 test_util:
   extends: .default_test
@@ -61,8 +60,8 @@ deploy_tf:
     TF_VAR_image_registry: $CI_REGISTRY_IMAGE
   before_script:
     - cd terraform
-    - terraform --version
     - terraform init
+    - ls -la
   script:
     - terraform plan -out=tfplan
     - terraform apply -input=false tfplan
