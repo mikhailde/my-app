@@ -7,10 +7,6 @@ terraform {
   }
 }
 
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-}
-
 locals {
   image      = "${var.image_registry}:${var.image_tag}"
 }
