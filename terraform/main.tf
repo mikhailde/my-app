@@ -1,18 +1,14 @@
+terraform {
+  required_providers {
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+      version = "~> 2.33.0"
+    }
+  }
+}
+
 provider "kubernetes" {
-  host                   = "https://${minikube_ip}:8443"
-  client_certificate     = file("${local.kubeconfig}/client.crt")
-  client_key             = file("${local.kubeconfig}/client.key")
-  cluster_ca_certificate = file("${local.kubeconfig}/ca.crt")
-}
-
-data "external" "minikube_ip" {
-  program = ["sh", "-c", "minikube ip"]
-}
-
-locals {
-  kubeconfig = "~/.kube/config"
-  image      = "${var.image_registry}:${var.image_tag}"
-  minikube_ip = data.external.minikube_ip.result["stdout"]
+  config_path = "~/.kube/config"
 }
 
 variable "image_registry" {
