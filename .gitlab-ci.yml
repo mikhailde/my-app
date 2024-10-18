@@ -65,7 +65,7 @@ deploy_tf:
     policy: pull-push
   before_script:
     - cd terraform
-    - terraform init
+    # - terraform init
   script:
     - terraform plan -out=tfplan
     - terraform apply -input=false tfplan
