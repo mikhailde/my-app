@@ -60,6 +60,7 @@ deploy_tf:
   stage: deploy_tf
   image: hashicorp/terraform:light
   before_script:
+    - cd terraform
     - terraform --version
     - terraform init
   script:
