@@ -76,7 +76,7 @@ class TestFlaskApp(unittest.TestCase):
         """Test the root (/) route for a simple 'Hello, World!' response."""
         response = self.app.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b"Hello, World")
+        self.assertEqual(response.data, b"Hello, World!")
 
     def test_hello_name(self):
         """Test if the /hello/<name> route works for valid names."""

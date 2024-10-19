@@ -9,9 +9,7 @@ spec:
     kind: Deployment
     name: my-app
   service:
-    port: 80
-    targetPort: 8080
-    portName: http
+    port: 8080
   analysis:
     interval: 1m
     threshold: 5
