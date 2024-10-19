@@ -2,7 +2,6 @@ stages:
   - build
   - test
   - deploy_helm
-  - deploy_canary
   # - deploy_tf
 
 build:
@@ -52,20 +51,6 @@ deploy_helm:
       --set image.repository=$CI_REGISTRY_IMAGE
       --namespace my-app --create-namespace
 #     - kubectl rollout restart deployment my-app -n my-app
-
-deploy_canary:
-  stage: deploy_canary
-  image: weaveworks/flagger:1.4.2
-  script:
-    - kubectl apply -f k8s/canary.yaml -n my-app
-    - flagger canary promote my-app -n my-app
-  needs: ["deploy_helm"]
-  environment:
-    name: production
-    url: http://$MINIKUBE_IP:30000/
-  only:
-    - main 
-
 
 # deploy_tf:
 #   stage: deploy_tf
