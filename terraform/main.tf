@@ -3,8 +3,6 @@ terraform {
     address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default"
     lock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default/lock"
     unlock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default/lock"
-    username = "${CI_REGISTRY_USER}"
-    password = "${CI_TERRAFORM_PASSWORD}"
     lock_method = "POST"
     unlock_method = "DELETE"
     retry_wait_min = 5
