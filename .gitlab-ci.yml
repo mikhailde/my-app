@@ -1,8 +1,8 @@
 stages:
   - build
   - test
-  # - deploy_helm
-  - deploy_tf
+  - deploy_helm
+  # - deploy_tf
 
 build:
   stage: build
@@ -42,26 +42,39 @@ test_flask_app:
   script:
     - python -m unittest tests.test_app.TestFlaskApp
 
-# deploy_helm:
-#   stage: deploy_helm
-#   image: dtzar/helm-kubectl
-#   script:
-#     - helm upgrade --install my-app ./chart
-#       --set image.tag=latest
-#       --set image.repository=$CI_REGISTRY_IMAGE
-#       --namespace my-app --create-namespace
+deploy_helm:
+  stage: deploy_helm
+  image: dtzar/helm-kubectl
+  script:
+    - helm upgrade --install my-app ./chart
+      --set image.tag=latest
+      --set image.repository=$CI_REGISTRY_IMAGE
+      --namespace my-app --create-namespace
 #     - kubectl rollout restart deployment my-app -n my-app
 
-
-deploy_tf:
-  stage: deploy_tf
-  image: registry.gitlab.com/gitlab-org/terraform-images/releases/1.5:v1.8.0
-  variables:
-    TF_VAR_image_registry: $CI_REGISTRY_IMAGE
-    TF_CLI_CONFIG_FILE: "config.tfrc"
-  before_script:
-    - cd terraform
-    - gitlab-terraform init
+deploy_canary:
+  stage: deploy_canary
+  image: dtzar/helm-kubectl
   script:
-    - gitlab-terraform plan -lock=false
-    - gitlab-terraform apply
+    - kubectl apply -f k8s/canary.yaml -n my-app
+    - flagger canary promote my-app -n my-app
+  needs: ["deploy_helm"]
+  environment:
+    name: production
+    url: http://$MINIKUBE_IP:30000/
+  only:
+    - main 
+
+
+# deploy_tf:
+#   stage: deploy_tf
+#   image: registry.gitlab.com/gitlab-org/terraform-images/releases/1.5:v1.8.0
+#   variables:
+#     TF_VAR_image_registry: $CI_REGISTRY_IMAGE
+#     TF_CLI_CONFIG_FILE: "config.tfrc"
+#   before_script:
+#     - cd terraform
+#     - gitlab-terraform init
+#   script:
+#     - gitlab-terraform plan -lock=false
+#     - gitlab-terraform apply
