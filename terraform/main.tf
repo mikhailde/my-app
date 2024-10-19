@@ -19,7 +19,6 @@ terraform {
 
 output "ci_job_token" {
   value = "$CI_TERRAFORM_PASSWORD" # or var.ci_job_token if you define it as variable
-  sensitive = true # Очень важно пометить как sensitive, чтобы не выводить в обычный output
 }
 
 locals {
