@@ -55,7 +55,7 @@ deploy_helm:
 
 deploy_canary:
   stage: deploy_canary
-  image: weaveworks/flagger
+  image: weaveworks/flagger:1.4.2
   script:
     - kubectl apply -f k8s/canary.yaml -n my-app
     - flagger canary promote my-app -n my-app
