@@ -1,24 +1,20 @@
 terraform {
-#  backend "http" {
-#    address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default"
-#    lock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default/lock"
-#    unlock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default/lock"
-#    username = "$CI_REGISTRY_USER"
-#    password = "$CI_TERRAFORM_PASSWORD"
-#    lock_method = "POST"
-#    unlock_method = "DELETE"
-#    retry_wait_min = 5
-#  }
+  backend "http" {
+    address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default"
+    lock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default/lock"
+    unlock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/default/lock"
+    username = "${CI_REGISTRY_USER}"
+    password = "${CI_TERRAFORM_PASSWORD}"
+    lock_method = "POST"
+    unlock_method = "DELETE"
+    retry_wait_min = 5
+  }
   required_providers {
     kubernetes = {
       source = "hashicorp/kubernetes"
       version = "2.33.0"
     }
   }
-}
-
-output "ci_job_token" {
-  value = "$CI_TERRAFORM_PASSWORD" # or var.ci_job_token if you define it as variable
 }
 
 locals {
