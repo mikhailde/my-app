@@ -55,7 +55,7 @@ stages:
 
 deploy_tf:
   stage: deploy_tf
-  # image: hashicorp/terraform:light
+  image: registry.gitlab.com/gitlab-org/terraform-images/releases/v1.8.0
   variables:
     TF_VAR_image_registry: $CI_REGISTRY_IMAGE
     # TF_CLI_CONFIG_FILE: "config.tfrc"
