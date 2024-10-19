@@ -1,4 +1,14 @@
 terraform {
+  backend "http" {
+    address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/staging"
+    lock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/staging/lock"
+    unlock_address = "https://gitlab.com/api/v4/projects/60883301/terraform/state/staging/lock"
+    username = "$CI_REGISTRY_USER"
+    password = "$CI_REGISTRY_PASSWORD"
+    lock_method = "POST"
+    unlock_method = "DELETE"
+    retry_wait_min = 5
+  }
   required_providers {
     kubernetes = {
       source = "hashicorp/kubernetes"
