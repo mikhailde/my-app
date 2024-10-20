@@ -1,6 +1,14 @@
 from flask import Flask, request, jsonify
+from prometheus_client import start_http_server, Summary, Counter, Gauge, Histogram
+import psutil
 
 app = Flask(__name__)
+
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
+REQUEST_COUNT = Counter('http_request_total', 'Total HTTP Requests', ['method', 'endpoint', 'http_status'])
+REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds', ['endpoint'])
+
+RESOURCES = Gauge('avaliable_resources', 'Available resources', ['resource_type'])
 
 def util_1(input_string):
     """
@@ -23,29 +31,38 @@ def util_2(numbers):
     return sum(numbers)
 
 @app.route("/")
+@REQUEST_TIME.time()
+@REQUEST_LATENCY.labels(endpoint="/").time()
 def hello_world():
     return "Hello, World!"
 
 @app.route("/hello/<name>")
+@REQUEST_TIME.time()
+@REQUEST_LATENCY.labels(endpoint="/hello/<name>").time()
 def hello_name(name):
     if not name.isalpha():
         return "Invalid input", 400
     return f"Hello, {name}!"
 
 @app.route("/params")
+@REQUEST_TIME.time()
+@REQUEST_LATENCY.labels(endpoint="/params").time()
 def params():
     param1 = request.args.get("param1")
     param2 = request.args.get("param2")
     return jsonify({"param1": param1, "param2": param2})
 
-
 @app.route("/post_endpoint", methods=["POST"])
+@REQUEST_TIME.time()
+@REQUEST_LATENCY.labels(endpoint="/post_endpoint").time()
 def post_endpoint():
       data = request.get_json()
       return jsonify({"message": "Data received successfully"}), 201
 
 
 @app.route("/protected")
+@REQUEST_TIME.time()
+@REQUEST_LATENCY.labels(endpoint="/protected").time()
 def protected():
 
       auth_header = request.headers.get("Authorization")
@@ -58,4 +75,9 @@ def protected():
 
 
 if __name__ == '__main__':
+    start_http_server(8000)
+
+    RESOURCES.labels(resource_type="cpu").set(psutil.cpu_percent())
+    RESOURCES.labels(resource_type="memory").set(psutil.virtual_memory().percent)
+
     app.run(debug=True, host='0.0.0.0', port=8080)
