@@ -8,7 +8,7 @@ REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing requ
 REQUEST_COUNT = Counter('http_request_total', 'Total HTTP Requests', ['method', 'endpoint', 'http_status'])
 REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds', ['endpoint'])
 
-RESOURCES = Gauge('avaliable_resources', 'Available resources', ['resource_type'])
+RESOURCES = Gauge('available_resources', 'Available resources', ['resource_type'])
 
 def util_1(input_string):
     """
