@@ -33,6 +33,7 @@ runners:
           [[runners.kubernetes.volumes.pvc]]
           name = "gitlab-cache-pvc"
           mount_path = "/cache"
+          mount_propagation = "HostToContainer"
 
       [runners.cache]
         Type = "persistentVolumeClaim"
