@@ -9,7 +9,7 @@ spec:
     kind: Deployment
     name: my-app
   service:
-    port: 8080
+    port: 5000
   analysis:
     interval: 1m
     threshold: 5
