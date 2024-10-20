@@ -8,7 +8,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "my-app.selectorLabels" . | nindent 6 }}
+      {{- toYaml .Values.serviceMonitor.selector | nindent 6 }}
   endpoints:
     - port: metrics
       interval: {{ .Values.serviceMonitor.interval | default "15s" }}

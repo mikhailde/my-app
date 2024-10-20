@@ -28,6 +28,8 @@ serviceAccount:
 serviceMonitor:
   enabled: true
   interval: 10s
+  selector:
+    app.kubernetes.io/name: my-app-primary
 
 podAnnotations: {}
 podLabels: {}
