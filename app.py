@@ -80,4 +80,4 @@ if __name__ == '__main__':
     RESOURCES.labels(resource_type="cpu").set(psutil.cpu_percent())
     RESOURCES.labels(resource_type="memory").set(psutil.virtual_memory().percent)
 
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=5000)
