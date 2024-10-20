@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "my-app.fullname" . }}
+  name: {{ include "my-app.fullname" . }}-primary
   labels:
     {{- include "my-app.labels" . | nindent 4 }}
 spec:
