@@ -45,8 +45,8 @@ securityContext: {}
 
 service:
   type: NodePort
-  port: 8080
-  metricsPort: 8000
+  port: 5000
+  metricsPort: 8080
 
 ingress:
   enabled: false
@@ -79,11 +79,11 @@ resources: {}
 livenessProbe:
   httpGet:
     path: /
-    port: 8080
+    port: 5000
 readinessProbe:
   httpGet:
     path: /
-    port: 8080
+    port: 5000
 
 autoscaling:
   enabled: false

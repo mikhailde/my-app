@@ -75,9 +75,9 @@ def protected():
 
 
 if __name__ == '__main__':
-    start_http_server(8000)
+    start_http_server(8080)
 
     RESOURCES.labels(resource_type="cpu").set(psutil.cpu_percent())
     RESOURCES.labels(resource_type="memory").set(psutil.virtual_memory().percent)
 
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=5000)
