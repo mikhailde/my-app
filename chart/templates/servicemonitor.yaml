@@ -10,6 +10,6 @@ spec:
     matchLabels:
       {{- toYaml .Values.serviceMonitor.selector | nindent 6 }}
   endpoints:
-    - port: 8080
+    - port: "8080"
       interval: {{ .Values.serviceMonitor.interval | default "15s" }}
 {{- end }}
