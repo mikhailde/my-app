@@ -42,6 +42,7 @@ securityContext: {}
 service:
   type: NodePort
   port: 8080
+  metricsPort: 8000
 
 ingress:
   enabled: false
