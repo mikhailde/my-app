@@ -1,11 +1,72 @@
+additionalPrometheusRulesMap:
+  custom-alerts:
+    groups:
+      - name: cpu_usage_alerts
+        rules:
+          - alert: HighCpuUsage
+            expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance) * 100) > 80
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Высокая загрузка CPU на {{ $labels.instance }}"
+              description: "Уровень использования CPU на {{ $labels.instance }} превышает 80%. Текущее значение: {{ $value }}%."
+      - name: gitlab_runner_alerts
+        rules:
+          - alert: GitLabRunnerFailedJobs
+            expr: increase(gitlab_runner_failed_jobs_total[5m]) > 0
+            for: 10m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Неудачные задания в GitLab Runner"
+              description: "Обнаружено неудачное задание в GitLab Runner за последние 5 минут."
+
+
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+      smtp_smarthost: 'smtp.freesmtpservers.com'
+      smtp_from: 'alertmanager@example.com'
+      smtp_require_tls: true
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'severity']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'email-receiver'
+      routes:
+        - march:
+            severity: critical
+          receiver: 'email-receiver'
+          continue: false
+    receivers:
+      - name: 'email-receiver'
+        email_configs:
+          - to: 'mshchannikov@yandex.ru'
+            send_resolved: true
+  service:
+    type: NodePort
+
 grafana:
   service:
     type: NodePort
   alertmanager:
     handleGrafanaManagedAlerts: true
+  persistence:
+    enabled: true
+    type: pvc
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+    storageClassName: ""
+    annotations: {}
 
 prometheus:
   service:
     type: NodePort
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
+
