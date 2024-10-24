@@ -63,4 +63,4 @@ deploy_tf:
     - gitlab-terraform init
   script:
     - gitlab-terraform plan -lock=false
-    - gitlab-terraform apply
+    - gitlab-terraform apply 
