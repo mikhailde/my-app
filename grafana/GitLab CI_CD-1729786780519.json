@@ -128,7 +128,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "count(count_values(\"runner\", gitlab_runner_jobs))",
+          "expr": "count(count_values(\"runner\", gitlab_runner_jobs{state=\"running\"}))",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -295,7 +295,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Отображает скорость использования CPU процессом GitLab Runner за последние 5 минут.",
+      "description": "Отображает процент использования CPU процессом GitLab Runner за последние 5 минут.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -305,7 +305,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "CPU (seconds)",
+            "axisLabel": "Использование CPU (%)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -348,7 +348,7 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "percentunit"
         },
         "overrides": []
       },
@@ -381,14 +381,14 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(process_cpu_seconds_total{job=\"gitlab-runner\"}[5m])",
+          "expr": "100 * rate(process_cpu_seconds_total{job=\"gitlab-runner\"}[5m]) / 2",
           "instant": false,
           "legendFormat": "{{instance}} - {{job}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Использование CPU runner'ом",
+      "title": "Использование CPU runner'ом (%)",
       "transparent": true,
       "type": "timeseries"
     },
@@ -711,6 +711,6 @@
   "timezone": "",
   "title": "GitLab CI/CD",
   "uid": "ae1hbjbxqc1dsa",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
