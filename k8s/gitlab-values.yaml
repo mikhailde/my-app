@@ -42,8 +42,4 @@ runners:
           Shared = true
           Path = "/cache"
 
-#      [runners.cache]
-#        Type = "persistentVolumeClaim"
-#        Shared = true
-#        Path = "/cache"
   secret: gitlab-runner-secret
