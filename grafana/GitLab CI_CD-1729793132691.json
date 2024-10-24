@@ -397,7 +397,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Отображает текущий объем используемой памяти процессом GitLab Runner.",
+      "description": "Процент использования резидентной памяти runner'ом",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -450,7 +450,7 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "percent"
         },
         "overrides": []
       },
@@ -480,7 +480,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "process_resident_memory_bytes{job=\"gitlab-runner\"}",
+          "expr": "(process_resident_memory_bytes{job=\"gitlab-runner\"} / 3455541248) * 100",
           "instant": false,
           "interval": "",
           "legendFormat": "{{instance}} - {{job}}",
@@ -650,13 +650,13 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "GitLab CI/CD",
   "uid": "ae1hbjbxqc1dsa",
-  "version": 8,
+  "version": 9,
   "weekStart": ""
 }
