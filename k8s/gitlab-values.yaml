@@ -37,9 +37,13 @@ runners:
           name = "gitlab-cache-pvc"
           mount_path = "/cache"
           mount_propagation = "HostToContainer"
+        [runners.kubernetes.cache]
+          Type = "persistentVolumeClaim"
+          Shared = true
+          Path = "/cache"
 
-      [runners.cache]
-        Type = "persistentVolumeClaim"
-        Shared = true
-        Path = "/cache"
+#      [runners.cache]
+#        Type = "persistentVolumeClaim"
+#        Shared = true
+#        Path = "/cache"
   secret: gitlab-runner-secret
