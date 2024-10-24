@@ -407,7 +407,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Память (bytes)",
+            "axisLabel": "Использование памяти (%)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -650,13 +650,13 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "GitLab CI/CD",
   "uid": "ae1hbjbxqc1dsa",
-  "version": 9,
+  "version": 10,
   "weekStart": ""
 }
