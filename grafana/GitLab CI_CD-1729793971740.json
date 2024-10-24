@@ -162,7 +162,7 @@
           "refId": "A"
         }
       ],
-      "title": "Использование CPU runner'ом (%)",
+      "title": "Использование CPU runner'ом",
       "transparent": true,
       "type": "timeseries"
     },
