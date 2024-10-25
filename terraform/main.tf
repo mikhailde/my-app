@@ -64,13 +64,19 @@ resource "kubernetes_deployment" "app_deployment" {
           name  = "my-app"
 
           port {
+            container_port = 5000
+            name           = "http"
+          }
+
+          port {
             container_port = 8080
+            name           = "metrics"
           }
 
           liveness_probe {
             http_get {
               path = "/"
-              port = 8080
+              port = 5000
             }
             initial_delay_seconds = 5
             period_seconds        = 10
@@ -79,7 +85,7 @@ resource "kubernetes_deployment" "app_deployment" {
           readiness_probe {
             http_get {
               path = "/"
-              port = 8080
+              port = 5000
             }
             initial_delay_seconds = 5
             period_seconds        = 10
@@ -105,6 +111,14 @@ resource "kubernetes_service" "app_service" {
       protocol    = "TCP"
       port        = 5000
       target_port = 5000
+      name        = "http"
+    }
+
+    port = {
+      protocol    = "TCP"
+      port        = 8080
+      target_port = 8080
+      name        = "metrics"
     }
 
     type = "NodePort"
