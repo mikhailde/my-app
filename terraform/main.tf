@@ -19,35 +19,24 @@ locals {
   image      = "${var.image_registry}:${var.image_tag}"
 }
 
-variable "image_registry" {
-  description = "Container registry for the image"
-  type        = string
-}
-
-variable "image_tag" {
-  description = "Tag of the Docker image"
-  type        = string
-  default     = "latest"
-}
-
 resource "kubernetes_namespace" "app_ns" {
   metadata {
-    name = "my-app"
+    name = var.namespace
   }
 }
 
 resource "kubernetes_deployment" "app_deployment" {
   metadata {
-    name      = "my-app"
+    name      = var.app_name
     namespace = kubernetes_namespace.app_ns.metadata[0].name
   }
 
   spec {
-    replicas = 1
+    replicas = var.replicas
 
     selector {
       match_labels = {
-        app = "my-app"
+        app = var.app_name
       }
     }
 
@@ -61,38 +50,70 @@ resource "kubernetes_deployment" "app_deployment" {
       spec {
         container {
           image = local.image
-          name  = "my-app"
+          name  = var.app_name
 
           port {
-            container_port = 5000
+            container_port = var.app_port
             name           = "http"
           }
 
           port {
-            container_port = 8080
+            container_port = var.metrics_port
             name           = "metrics"
           }
 
           liveness_probe {
             http_get {
               path = "/"
-              port = 5000
+              port = var.app_port
             }
-            initial_delay_seconds = 5
-            period_seconds        = 10
+            initial_delay_seconds = var.probe_initial_delay
+            period_seconds        = var.probe_period_seconds
           }
 
           readiness_probe {
             http_get {
               path = "/"
-              port = 5000
+              port = var.app_port
             }
-            initial_delay_seconds = 5
-            period_seconds        = 10
+            initial_delay_seconds = var.probe_initial_delay
+            period_seconds        = var.probe_period_seconds
           }
         }
       }
     }
+  }
+}
+
+resource "kubernetes_service" "app_service" {
+  metadata {
+    name      = var.app_name
+    namespace = kubernetes_namespace.app_ns.metadata[0].name
+    labels = {
+      app = var.app_name
+    }
+  }
+
+  spec {
+    selector = {
+      app = var.app_name
+    }
+
+    port {
+      protocol    = "TCP"
+      port        = var.app_port
+      target_port = var.app_port
+      name        = "http"
+    }
+
+    port {
+      protocol    = "TCP"
+      port        = var.metrics_port
+      target_port = var.metrics_port
+      name        = "metrics"
+    }
+
+    type = "NodePort"
   }
 }
 
@@ -101,7 +122,7 @@ resource "kubernetes_manifest" "canary" {
     "apiVersion" = "flagger.app/v1beta1"
     "kind" = "Canary"
     "metadata" = {
-      "name" = "my-app"
+      "name" = var.app_name
       "namespace" = kubernetes_namespace.app_ns.metadata[0].name
     }
     "spec" = {
@@ -111,14 +132,14 @@ resource "kubernetes_manifest" "canary" {
         "name" = kubernetes_deployment.app_deployment.metadata[0].name
       }
       "service" = {
-        "port" = 5000
+        "port" = var.app_port
         "portDiscovery" = true
       }
       "analysis" = {
-        "interval" = "1m"
-        "threshold" = 5
-        "maxWeight" = 50
-        "stepWeight" = 10
+        "interval" = var.canary_interval
+        "threshold" = var.canary_threshold
+        "maxWeight" = var.canary_max_weight
+        "stepWeight" = var.canary_step_weight
         "metrics" = [
           {
             "name" = "request-success-rate"
@@ -130,7 +151,7 @@ resource "kubernetes_manifest" "canary" {
           {
             "name" = "request-duration"
             "thresholdRange" = {
-              "max" = 500
+              "max" = var.canary_request_duration
             }
             "interval" = "30s"
           }
@@ -142,45 +163,12 @@ resource "kubernetes_manifest" "canary" {
   }
 }
 
-
-resource "kubernetes_service" "app_service" {
-  metadata {
-    name      = "my-app"
-    namespace = kubernetes_namespace.app_ns.metadata[0].name
-    labels = {
-      app = "my-app"
-    }
-  }
-
-  spec {
-    selector = {
-      app = "my-app"
-    }
-
-    port {
-      protocol    = "TCP"
-      port        = 5000
-      target_port = 5000
-      name        = "http"
-    }
-
-    port {
-      protocol    = "TCP"
-      port        = 8080
-      target_port = 8080
-      name        = "metrics"
-    }
-
-    type = "NodePort"
-  }
-}
-
 resource "kubernetes_manifest" "service_monitor" {
   manifest = {
     "apiVersion" = "monitoring.coreos.com/v1"
     "kind" = "ServiceMonitor"
     "metadata" = {
-      "name" = "my-app"
+      "name" = var.app_name
       "namespace" = kubernetes_namespace.app_ns.metadata[0].name
       "labels" = {
         "app.kubernetes.io/name" = "my-app"
@@ -195,7 +183,7 @@ resource "kubernetes_manifest" "service_monitor" {
       "endpoints" = [
         {
           "port" = "metrics"
-          "interval" = "10s"
+          "interval" = var.service_monitor_interval
         }
       ]
     }
