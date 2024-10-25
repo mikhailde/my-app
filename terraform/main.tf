@@ -96,6 +96,53 @@ resource "kubernetes_deployment" "app_deployment" {
   }
 }
 
+resource "kubernetes_manifest" "canary" {
+  manifest = {
+    "apiVersion" = "flagger.app/v1beta1"
+    "kind" = "Canary"
+    "metadata" = {
+      "name" = "my-app"
+      "namespace" = kubernetes_namespace.app_ns.metadata[0].name
+    }
+    "spec" = {
+      "targetRef" = {
+        "apiVersion" = "apps/v1"
+        "kind" = "Deployment"
+        "name" = kubernetes_deployment.app_deployment.metadata[0].name
+      }
+      "service" = {
+        "port" = 5000
+        "portDiscovery" = true
+      }
+      "analysis" = {
+        "interval" = "1m"
+        "threshold" = 5
+        "maxWeight" = 50
+        "stepWeight" = 10
+        "metrics" = [
+          {
+            "name" = "request-success-rate"
+            "thresholdRange" = {
+              "min" = 99
+            }
+            "interval" = "30s"
+          },
+          {
+            "name" = "request-duration"
+            "thresholdRange" = {
+              "max" = 500
+            }
+            "interval" = "30s"
+          }
+        ]
+        "webhooks" = []
+      }
+      "progressDeadlineSeconds" = 600
+    }
+  }
+}
+
+
 resource "kubernetes_service" "app_service" {
   metadata {
     name      = "my-app"
