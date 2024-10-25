@@ -137,6 +137,7 @@ resource "kubernetes_manifest" "service_monitor" {
       }
     }
     "spec" = {
+      "namespace" = kubernetes_namespace.app_ns.metadata[0].name
       "selector" = {
         "matchLabels" = {
           "app" = "my-app"
