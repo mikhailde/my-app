@@ -30,8 +30,8 @@ test:
       - venv/
     policy: pull-push
   script:
-    - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests/test_app; fi
-    - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests/test_utils; fi
+    - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app; fi
+    - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_utils; fi
   parallel: 2
 
 # deploy_helm:
