@@ -106,12 +106,6 @@ resource "kubernetes_service" "app_service" {
       port        = 5000
       target_port = 5000
     }
-    port {
-      name        = "metrics"
-      protocol    = "TCP"
-      port        = 8080
-      target_port = 8080
-    }
 
     type = "NodePort"
   }
@@ -142,5 +136,4 @@ resource "kubernetes_manifest" "service_monitor" {
       ]
     }
   }
-  depends_on = [kubernetes_service.app_service]
 }
