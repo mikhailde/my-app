@@ -2,7 +2,6 @@ apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
   name: my-app
-  namespace: my-app
 spec:
   targetRef:
     apiVersion: apps/v1
@@ -10,7 +9,7 @@ spec:
     name: my-app
   service:
     port: 5000
-    targetPort: http
+    portDiscovery: true
   analysis:
     interval: 1m
     threshold: 5
@@ -20,4 +19,11 @@ spec:
     - name: request-success-rate
       thresholdRange:
         min: 99
-      interval: 1m
+      interval: 30s
+    - name: request-duration
+      thresholdRange:
+        max: 500
+      interval: 30s
+    webhooks: []
+
+  progressDeadlineSeconds: 600
