@@ -1,8 +1,10 @@
 stages:
   - build
   - test
-  # - deploy_helm
-  - deploy_tf
+  - deploy
+
+variables:
+  DEPLOY_METHOD: "terraform"
 
 build:
   stage: build
@@ -34,22 +36,28 @@ test:
     - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_utils; fi
   parallel: 2
 
-# deploy_helm:
-#   stage: deploy_helm
-#   image: dtzar/helm-kubectl
-#   script:
-#     - helm upgrade --install my-app ./chart
-#       --set image.tag=latest
-#       --set image.repository=$CI_REGISTRY_IMAGE
-#       --namespace my-app --create-namespace
-#     - kubectl rollout restart deployment my-app -n my-app
+deploy_helm:
+  stage: deploy
+  image: dtzar/helm-kubectl
+  only:
+    variables:
+      - $DEPLOY_METHOD == "helm"
+  script:
+    - helm upgrade --install my-app ./chart
+      --set image.tag=latest
+      --set image.repository=$CI_REGISTRY_IMAGE
+      --namespace my-app --create-namespace
+    - kubectl rollout restart deployment my-app -n my-app
 
 deploy_tf:
-  stage: deploy_tf
+  stage: deploy
   image: registry.gitlab.com/gitlab-org/terraform-images/releases/1.5:v1.8.0
   variables:
     TF_VAR_image_registry: $CI_REGISTRY_IMAGE
     TF_CLI_CONFIG_FILE: "config.tfrc"
+  only:
+    variables:
+      - $DEPLOY_METHOD == "terraform"
   before_script:
     - cd terraform
     - gitlab-terraform init
