@@ -69,7 +69,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Отображает процент использования CPU процессом GitLab Runner за последние 5 минут.",
+      "description": "Отображает процент использования CPU процессом GitLab Runner.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -650,13 +650,13 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "GitLab CI/CD",
   "uid": "ae1hbjbxqc1dsa",
-  "version": 11,
+  "version": 12,
   "weekStart": ""
 }
