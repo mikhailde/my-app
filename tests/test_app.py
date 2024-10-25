@@ -36,7 +36,7 @@ class TestFlaskApp(unittest.TestCase):
 
     def test_params(self):
         """Тестирует, правильно ли /params возвращает параметры в формате JSON."""
-        response = self.app.get("/params?param1=value1¶m2=value2")
+        response = self.app.get("/params?param1=value1&param2=value2")
         self.assertEqual(response.status_code, 200)
         expected_data = jsonify({"param1": "value1", "param2": "value2"}).get_data(as_text=True)
         self.assertEqual(response.get_data(as_text=True), expected_data)
