@@ -17,7 +17,7 @@ build:
       --cache=true
       --cache-repo=${CI_REGISTRY_IMAGE}/cache
 
-.default_test:
+test:
   stage: test
   image: python:latest
   before_script:
@@ -29,18 +29,9 @@ build:
     paths:
       - venv/
     policy: pull-push
-
-test_util:
-  extends: .default_test
   script:
-    - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app.TestUtil1; fi
-    - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_app.TestUtil2; fi
+    - python -m unittest discover -s tests
   parallel: 2
-
-test_flask_app:
-  extends: .default_test
-  script:
-    - python -m unittest tests.test_app.TestFlaskApp
 
 # deploy_helm:
 #   stage: deploy_helm
