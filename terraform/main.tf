@@ -114,7 +114,7 @@ resource "kubernetes_service" "app_service" {
       name        = "http"
     }
 
-    port = {
+    port {
       protocol    = "TCP"
       port        = 8080
       target_port = 8080
