@@ -103,10 +103,44 @@ resource "kubernetes_service" "app_service" {
 
     port {
       protocol    = "TCP"
+      port        = 5000
+      target_port = 5000
+    }
+    port {
+      name        = "metrics"
+      protocol    = "TCP"
       port        = 8080
       target_port = 8080
     }
 
     type = "NodePort"
   }
+}
+
+resource "kubernetes_manifest" "service_monitor" {
+  manifest = {
+    "apiVersion" = "monitoring.coreos.com/v1"
+    "kind" = "ServiceMonitor"
+    "metadata" = {
+      "name" = "my-app"
+      "namespace" = kubernetes_namespace.app_ns.metadata[0].name
+      "labels" = {
+        "app.kubernetes.io/name" = "my-app"
+      }
+    }
+    "spec" = {
+      "selector" = {
+        "matchLabels" = {
+          "app" = "my-app"
+        }
+      }
+      "endpoints" = [
+        {
+          "port" = "metrics"
+          "interval" = "10s"
+        }
+      ]
+    }
+  }
+  depends_on = [kubernetes_service.app_service]
 }
