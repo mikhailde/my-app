@@ -17,7 +17,7 @@
 
 ## Архитектура
 
-![architecture](https://github.com/user-attachments/assets/6a97123b-e219-4e91-aaca-8504b6eaeaa0)
+![Архитектура](https://github.com/user-attachments/assets/6a97123b-e219-4e91-aaca-8504b6eaeaa0)
 
 * **Приложение:** Простое Flask-приложение, возвращающее сообщение "Hello, World!".
 * **Docker:** Контейнеризация приложения для переносимости и упрощения деплоя.
