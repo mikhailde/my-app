@@ -16,8 +16,8 @@ build:
     - /kaniko/executor --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}:latest"
-      # --cache=true
-      # --cache-repo=${CI_REGISTRY_IMAGE}/cache
+      --cache=true
+      --cache-repo=${CI_REGISTRY_IMAGE}/cache
 
 test:
   stage: test
@@ -26,16 +26,15 @@ test:
     - python -m venv venv
     - source venv/bin/activate
     - pip install -r requirements.txt
-  # cache:
-  #   key: ${CI_COMMIT_REF_SLUG}
-  #   paths:
-  #     - venv/
-  #   policy: pull-push
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - venv/
+    policy: pull-push
   script:
-    # - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app; fi
-    # - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_utils; fi
-    - python -m unittest discover tests/
-  # parallel: 2
+    - if [ "$CI_NODE_INDEX" == "1" ]; then python -m unittest tests.test_app; fi
+    - if [ "$CI_NODE_INDEX" == "2" ]; then python -m unittest tests.test_utils; fi
+  parallel: 2
 
 deploy_helm:
   stage: deploy
