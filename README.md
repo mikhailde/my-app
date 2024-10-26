@@ -39,7 +39,6 @@
 - **Canary Deployments с Flagger:** Обеспечивает безопасный и постепенный деплой обновлений (см. `k8s/canary.yaml`).
 
 ## Инструкция по запуску
-![architecture](https://github.com/user-attachments/assets/65ec0839-f96c-4353-a8ea-a28650055ed0)
 
 ### Предварительные требования
 - Установленные инструменты: `kubectl`, `helm`, `docker`, `terraform`, `minikube`.
